@@ -5,6 +5,9 @@ ruby '2.7.4'
 
 gem 'rails', '~> 6.1.4', '>= 6.1.4.1'
 gem 'bcrypt',         '3.1.13'
+gem 'faker',                   '2.7.0'
+gem 'will_paginate',           '3.1.8'
+gem 'bootstrap-will_paginate', '1.0.0'
 gem 'bootstrap-sass', '3.4.1'
 gem 'puma', '~> 5.0'
 gem 'sass-rails', '>= 6'
@@ -38,7 +41,7 @@ group :test do
 end
 
 group :production do
-  gem 'pg', '1.1.4'
+  gem 'pg', '1.2.3'
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
