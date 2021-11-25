@@ -8,31 +8,42 @@ class UsersController < ApplicationController
   def index
     # インスタンス変数@usersに以下を代入
     # Userテーブルからactivated:がtrueのデータをすべて取り出してpaginate(page: params[:page])する
-    @users = User.where(activated: true).paginate(page: params[:page])
+    #@users = User.where(activated: true).paginate(page: params[:page])
+    @users = User.paginate(page: params[:page])
+
   end
 
   def show
     # @userにUserテーブルから(params[:id])のデータを取り出して代入
     @user = User.find(params[:id])
-    #root_urlにリダイレクト　trueの場合ここで処理が終了する→　@userが有効ではない場合
- 　 #false(@userが有効）な場合はリダイレクトは実行されない
-    redirect_to root_url and return unless @user.activated?
+    #redirect_to root_url and return unless @user.activated?
   end
 
   def new
     @user = User.new
   end
 
+  # def create
+  #   @user = User.new(user_params)
+  #   if @user.save
+  #     @user.send_activation_email
+  #     flash[:info] = "Please check your email to activate your account."
+  #     redirect_to root_url
+  #   else
+  #     render 'new'
+  #   end
+  # end
+
   def create
     @user = User.new(user_params)
     if @user.save
-      @user.send_activation_email
-      flash[:info] = "Please check your email to activate your account."
-      redirect_to root_url
+    log_in @user
+    flash[:success] = "Welcome to the Sample App!"
+    redirect_to @user
     else
-      render 'new'
+    render 'new'
     end
-  end
+    end
 
   def edit
     @user = User.find(params[:id])
