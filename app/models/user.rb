@@ -1,8 +1,10 @@
 class User < ApplicationRecord
-  attr_accessor :remember_token, :activation_token
+  has_many :microposts, dependent: :destroy
+  attr_accessor :remember_token
+  # :activation_token
 
-  before_save { email.downcase! }
-  before_create :create_activation_digest
+  # before_save { email.downcase! }
+  # before_create :create_activation_digest
   validates :name,  presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 },
@@ -31,11 +33,11 @@ class User < ApplicationRecord
   end
 
   # トークンがダイジェストと一致したらtrueを返す
-  def authenticated?(attribute, token)
-    digest = send("#{attribute}_digest")
-    return false if digest.nil?
-    BCrypt::Password.new(digest).is_password?(token)
-  end
+  # def authenticated?(attribute, token)
+  #   digest = send("#{attribute}_digest")
+  #   return false if digest.nil?
+  #   BCrypt::Password.new(digest).is_password?(token)
+  # end
 
   def forget
     update_attribute(:remember_digest, nil)
@@ -53,16 +55,28 @@ class User < ApplicationRecord
   #   UserMailer.account_activation(self).deliver_now
   # end
 
+  def feed
+    Micropost.where("user_id = ?", id)
+  end
+
   private
 
   # メールアドレスをすべて小文字にする
-  def downcase_email
-    self.email = email.downcase
-  end
+  # def downcase_email
+  #   self.email = email.downcase
+  # end
 
   # 有効化トークンとダイジェストを作成および代入する
-  def create_activation_digest
-    self.activation_token = User.new_token
-    self.activation_digest = User.digest(activation_token)
-  end
+  # def create_activation_digest
+  #   self.activation_token = User.new_token
+  #   self.activation_digest = User.digest(activation_token)
+  # end
+
+  # test "associated microposts should be destroyed" do
+  #   @user.save
+  #   @user.microposts.create!(content: "Lorem ipsum")
+  #   assert_difference 'Micropost.count', -1 do
+  #     @user.destroy
+  #   end
+  # end
 end
